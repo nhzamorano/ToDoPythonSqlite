@@ -3,8 +3,6 @@ import os
 import csv 
 from database import Create_db
 
-
-
 class Tarea:
     def __init__(self, descripcion, categoria, detalles):
         self._descripcion = descripcion
@@ -151,7 +149,6 @@ class Administrador:
 
 class App:
     def __init__(self):
-        self.db = Create_db()
         self._administrador = Administrador()
         self._abrir_base_datos()
 
@@ -161,38 +158,25 @@ class App:
         #y almacena el listado de tareas, de lo contrario crea el archivo vacio
         #db = Create_db()
         if os.path.isfile('./DB.sqlite3'):
+            self.db = Create_db()
             self._agregar_tareas()
             self._administrador.mostrar()
+        else:
+            self.db = Create_db()
+            self.db.crear_tablas()
+
         
         #Ejecutar aplicativo despues de verificar existencia de archivo
-        #self._ejecutar()
+        self._ejecutar()
 
 
     def _agregar_tareas(self):
         tareas = self.db.listar_tareas()
-        #print(tareas[0])
-        #print(len(tareas))
         for t in tareas:
-            #print(t[1])
-            #print(t[2])
-            #print(t[3])
-            #print(t[4])
-            #print('-----------------------------------------------------------------')
             tarea = Tarea(t[1],t[2],t[3])
             if t[4] == 'Completada':
                 tarea.estado = 'Completada'
             self._administrador.agregar_tarea(tarea)
-        """
-        with open('./tareas.csv', 'r') as archivo:
-            reader = csv.reader(archivo)
-            
-            for fila in reader:
-                if len(fila) != 0:
-                    tarea = Tarea(fila[0], fila[1], fila[2])
-                    if fila[3] == 'Completada':
-                        tarea.estado = 'Completada'
-                    self._administrador.agregar_tarea(tarea)
-        """    
     
     def _ejecutar(self):
         '''
@@ -248,7 +232,7 @@ class App:
                 self._administrador.detalle_tarea(ID)
             elif opcion == 6:
                 continuar = False
-                self._actualizar_base_datos()
+                #self._actualizar_base_datos()
                 break
             else:
                 print('Debe seleccionar una opecion entre 1 y 6')
